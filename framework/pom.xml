@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+
         </dependency>
         <!--junit-->
         <dependency>
@@ -35,10 +35,10 @@
             <scope>test</scope>
         </dependency>
         <!--SpringSecurity启动器-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
         <!--redis依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
+            <version>8.0.25</version>
         </dependency>
 
 
