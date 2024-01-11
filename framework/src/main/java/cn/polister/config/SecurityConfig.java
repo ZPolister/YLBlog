@@ -1,6 +1,8 @@
 package cn.polister.config;
 
 import cn.polister.fliter.JwtAuthenticationTokenFilter;
+import cn.polister.handler.AccessDeniedHandlerImpl;
+import cn.polister.handler.AuthenticationEntryPointImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +22,10 @@ import javax.annotation.Resource;
 public class SecurityConfig {
 
     @Resource
+    AuthenticationEntryPointImpl authenticationEntryPoint;
+    @Resource
+    AccessDeniedHandlerImpl accessDeniedHandler;
+    @Resource
     JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,11 +43,20 @@ public class SecurityConfig {
                 .authorizeRequests()
                 // 对于登录接口 允许匿名访问
                 .antMatchers("/login").anonymous()
-                //.antMatchers("/link/getAllLink").authenticated()
+                .antMatchers("/logout").authenticated()
+               // .antMatchers("/link/getAllLink").authenticated()
                 // 除上面外的所有请求全部不需要认证即可访问
                 .anyRequest().permitAll();
-
+        // Token校验过滤
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // 配置异常处理器
+        http.exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
+
+        // 禁用默认logout接口
+        http.logout().disable();
 
         return http.build();
     }

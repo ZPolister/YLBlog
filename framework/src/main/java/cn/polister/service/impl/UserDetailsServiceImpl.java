@@ -34,6 +34,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         //TODO 查询用户信息
 
-        return new LoginUser(user);
+        return new LoginUser(user, null);
     }
 }

@@ -14,6 +14,7 @@ import java.util.Collection;
 public class LoginUser implements UserDetails {
 
     private User user;
+    private String token;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
