@@ -1,7 +1,7 @@
 package cn.polister.service;
 
-import cn.polister.domain.ResponseResult;
-import cn.polister.entity.Category;
+import cn.polister.entity.ResponseResult;
+import cn.polister.domain.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 

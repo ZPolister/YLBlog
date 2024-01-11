@@ -1,4 +1,4 @@
-package cn.polister.domain.entity;
+package cn.polister.entity;
 
 import java.util.Date;
 

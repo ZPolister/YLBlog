@@ -1,8 +1,9 @@
 package cn.polister.controller;
 
-import cn.polister.domain.ResponseResult;
+import cn.polister.entity.ResponseResult;
 import cn.polister.service.ArticleService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +28,9 @@ public class ArticleController {
         return articleService.getArticleList(pageNum, pageSize, categoryId);
     }
 
+    @GetMapping("/{id}")
+    public ResponseResult getArticleDetails(@PathVariable Long id) {
+        return articleService.getArticleDetails(id);
+    }
 
 }

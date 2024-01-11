@@ -1,6 +1,6 @@
 package cn.polister.mapper;
 
-import cn.polister.domain.entity.Article;
+import cn.polister.entity.Article;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

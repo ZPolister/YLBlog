@@ -2,12 +2,12 @@ package cn.polister.service.impl;
 
 import cn.polister.constants.ArticleConstants;
 import cn.polister.constants.HotArticleConstants;
-import cn.polister.domain.ResponseResult;
-import cn.polister.domain.entity.Article;
+import cn.polister.entity.ResponseResult;
+import cn.polister.entity.Article;
 import cn.polister.domain.vo.ArticlePageVo;
-import cn.polister.domain.vo.HotArticle;
+import cn.polister.entity.vo.HotArticle;
 import cn.polister.domain.vo.PageVo;
-import cn.polister.entity.Category;
+import cn.polister.domain.entity.Category;
 import cn.polister.mapper.ArticleMapper;
 import cn.polister.mapper.CategoryMapper;
 import cn.polister.service.ArticleService;
@@ -80,5 +80,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         List<ArticlePageVo> articlePageVos = BeanCopyUtils.copyBeanList(records, ArticlePageVo.class);
 
         return ResponseResult.okResult(new PageVo(articlePageVos, page.getTotal()));
+    }
+
+    @Override
+    public ResponseResult getArticleDetails(Long id) {
+
+        return ResponseResult.okResult(this.getById(id));
     }
 }

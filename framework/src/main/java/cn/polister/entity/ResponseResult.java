@@ -1,4 +1,4 @@
-package cn.polister.domain;
+package cn.polister.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import cn.polister.enums.AppHttpCodeEnum;
