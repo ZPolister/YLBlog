@@ -22,17 +22,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--lombk-->
+        <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-
         </dependency>
         <!--junit-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
         <!--SpringSecurity启动器-->
         <dependency>
@@ -65,9 +63,18 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.25</version>
         </dependency>
-
-
-
+        <!--腾讯云STS获取-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos-sts_api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <!--COS客户端创建-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>5.6.197</version>
+        </dependency>
         <!--AOP-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

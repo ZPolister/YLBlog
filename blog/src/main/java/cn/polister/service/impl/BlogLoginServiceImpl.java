@@ -7,12 +7,10 @@ import cn.polister.entity.LoginUser;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.User;
 import cn.polister.enums.AppHttpCodeEnum;
-import cn.polister.mapper.UserMapper;
 import cn.polister.service.BlogLoginService;
 import cn.polister.utils.BeanCopyUtils;
 import cn.polister.utils.JwtUtil;
 import cn.polister.utils.RedisCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
 @Service
 public class BlogLoginServiceImpl implements BlogLoginService {
 
@@ -30,6 +29,7 @@ public class BlogLoginServiceImpl implements BlogLoginService {
 
     @Resource
     AuthenticationManager authenticationManager;
+
     @Override
     public ResponseResult login(User user) {
 
@@ -61,7 +61,7 @@ public class BlogLoginServiceImpl implements BlogLoginService {
 
         // 从ContextHolder中获得LoginUser
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUser loginUser = (LoginUser)authentication.getPrincipal();
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
 
         // 移除redis上缓存
         redisCache.deleteObject("BlogLogin:" + loginUser.getToken());
