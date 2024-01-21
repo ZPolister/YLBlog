@@ -2,6 +2,7 @@ package cn.polister.service.impl;
 
 import cn.polister.constants.ArticleConstants;
 import cn.polister.constants.HotArticleConstants;
+import cn.polister.constants.SystemConstants;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Article;
 import cn.polister.domain.vo.ArticlePageVo;
@@ -12,11 +13,14 @@ import cn.polister.mapper.ArticleMapper;
 import cn.polister.mapper.CategoryMapper;
 import cn.polister.service.ArticleService;
 import cn.polister.utils.BeanCopyUtils;
+import cn.polister.utils.RedisCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public ArticleServiceImpl(CategoryMapper categoryMapper) {
         this.categoryMapper = categoryMapper;
     }
+
+    @Resource
+    RedisCache redisCache;
 
     @Override
     public ResponseResult getHotArticleList() {
@@ -70,6 +77,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 获取结果
         List<Article> records = page.getRecords();
 
+        // feature: 从Redis中获取阅读量 2024.1.21
+        records.forEach(article -> {
+            Integer viewCount = redisCache.getCacheMapValue(
+                    SystemConstants.REDIS_VIEW_COUNT_KEY, article.getId().toString());
+
+            article.setViewCount(viewCount.longValue());
+        });
+
         // 获取分类表缓存
         List<Category> list = categoryMapper.selectList(null);
         Map<Long, String> idNameMap = new HashMap<>();
@@ -85,6 +100,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ResponseResult getArticleDetails(Long id) {
 
-        return ResponseResult.okResult(this.getById(id));
+        Article article = this.getById(id);
+        // 拿到正确的浏览量
+        Integer cacheMapValue = redisCache.getCacheMapValue(SystemConstants.REDIS_VIEW_COUNT_KEY, id.toString());
+        article.setViewCount(cacheMapValue.longValue());
+        //article.setViewCount();
+        return ResponseResult.okResult(article);
+    }
+
+    @Override
+    public ResponseResult updateViewCount(Long id) {
+        // 调用redis中指定的值进行递增
+        redisCache.increaseMapVue(SystemConstants.REDIS_VIEW_COUNT_KEY, id.toString(), 1);
+
+        // 返回结果
+        return ResponseResult.okResult();
     }
 }

@@ -2,10 +2,7 @@ package cn.polister.controller;
 
 import cn.polister.entity.ResponseResult;
 import cn.polister.service.ArticleService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/article")
@@ -33,4 +30,6 @@ public class ArticleController {
         return articleService.getArticleDetails(id);
     }
 
+    @PutMapping("/updateViewCount/{id}")
+    public ResponseResult updateViewCount(@PathVariable Long id) {return articleService.updateViewCount(id);}
 }

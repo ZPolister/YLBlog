@@ -235,4 +235,14 @@ public class RedisCache
     {
         return redisTemplate.keys(pattern);
     }
+
+    /**
+     * 自增Map中指定的Key
+     * @param key Redis的键
+     * @param hKey Map的键
+     * @param i 自增的值
+     */
+    public void increaseMapVue(String key, String hKey, int i) {
+        redisTemplate.opsForHash().increment(key, hKey, i);
+    }
 }
