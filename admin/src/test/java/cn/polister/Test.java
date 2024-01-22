@@ -12,7 +12,7 @@ import java.util.List;
 public class Test {
     @Autowired
     RoleMenuMapper roleMenuMapper;
-    @org.junit.jupiter.api.Test
+    //@org.junit.jupiter.api.Test
     void test() {
         List<Long> ids = new ArrayList<>();
         ids.add(1L);

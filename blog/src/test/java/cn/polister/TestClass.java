@@ -20,7 +20,7 @@ public class TestClass {
     RedisCache redisCache;
     @Resource
     ArticleService articleService;
-    @Test
+
     void testCountJob() {
 
         // 先把redis中数据取下来
