@@ -1,4 +1,4 @@
-package cn.polister.domain.vo;
+package cn.polister.entity.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

@@ -1,6 +1,6 @@
 package cn.polister.service.impl;
 
-import cn.polister.domain.vo.UserInfoVo;
+import cn.polister.entity.vo.UserInfoVo;
 import cn.polister.entity.LoginUser;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.User;

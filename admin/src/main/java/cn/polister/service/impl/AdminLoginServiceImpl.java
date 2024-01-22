@@ -1,14 +1,12 @@
 package cn.polister.service.impl;
 
 import cn.polister.constants.SystemConstants;
-import cn.polister.domain.vo.BlogUserLoginVo;
-import cn.polister.entity.vo.UserInfoVo;
 import cn.polister.entity.LoginUser;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.User;
+import cn.polister.entity.vo.AdminUserVo;
 import cn.polister.enums.AppHttpCodeEnum;
-import cn.polister.service.BlogLoginService;
-import cn.polister.utils.BeanCopyUtils;
+import cn.polister.service.AdminLoginService;
 import cn.polister.utils.JwtUtil;
 import cn.polister.utils.RedisCache;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +20,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class BlogLoginServiceImpl implements BlogLoginService {
+public class AdminLoginServiceImpl implements AdminLoginService {
 
     @Resource
     RedisCache redisCache;
@@ -47,12 +45,10 @@ public class BlogLoginServiceImpl implements BlogLoginService {
         loginUser.setToken(jwt);
 
         // 缓存到Redis中
-        redisCache.setCacheObject("BlogLogin:" + jwt, loginUser,
+        redisCache.setCacheObject("AdminLogin:" + jwt, loginUser,
                 SystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
 
-        // 封装Vo返回
-        UserInfoVo userInfoVo = BeanCopyUtils.copyBean(loginUser.getUser(), UserInfoVo.class);
-        return ResponseResult.okResult(new BlogUserLoginVo(jwt, userInfoVo));
+        return ResponseResult.okResult(new AdminUserVo(jwt));
 
     }
 
@@ -64,7 +60,7 @@ public class BlogLoginServiceImpl implements BlogLoginService {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
 
         // 移除redis上缓存
-        redisCache.deleteObject("BlogLogin:" + loginUser.getToken());
+        redisCache.deleteObject("AdminLogin:" + loginUser.getToken());
 
         return ResponseResult.okResult();
     }
