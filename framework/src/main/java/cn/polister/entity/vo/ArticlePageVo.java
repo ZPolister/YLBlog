@@ -1,4 +1,4 @@
-package cn.polister.domain.vo;
+package cn.polister.entity.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package cn.polister.domain.entity;
+package cn.polister.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

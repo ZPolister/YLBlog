@@ -14,4 +14,12 @@ public interface ArticleService extends IService<Article> {
     ResponseResult getArticleDetails(Long id);
 
     ResponseResult updateViewCount(Long id);
+
+    ResponseResult addArticle(cn.polister.entity.dto.ArticleDto articleDto);
+
+    ResponseResult listArticle(Integer pageNum, Integer pageSize, String title, String summary);
+
+    ResponseResult getArticle(Long id);
+
+    ResponseResult updateArticle(Article article);
 }

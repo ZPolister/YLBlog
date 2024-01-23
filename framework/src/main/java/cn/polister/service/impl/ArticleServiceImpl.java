@@ -3,22 +3,21 @@ package cn.polister.service.impl;
 import cn.polister.constants.ArticleConstants;
 import cn.polister.constants.HotArticleConstants;
 import cn.polister.constants.SystemConstants;
-import cn.polister.entity.ResponseResult;
-import cn.polister.entity.Article;
-import cn.polister.domain.vo.ArticlePageVo;
-import cn.polister.entity.vo.HotArticle;
-import cn.polister.domain.vo.PageVo;
-import cn.polister.domain.entity.Category;
+import cn.polister.entity.*;
+import cn.polister.entity.dto.ArticleDto;
+import cn.polister.entity.vo.*;
 import cn.polister.mapper.ArticleMapper;
+import cn.polister.mapper.ArticleTagMapper;
 import cn.polister.mapper.CategoryMapper;
 import cn.polister.service.ArticleService;
+import cn.polister.service.ArticleTagService;
 import cn.polister.utils.BeanCopyUtils;
 import cn.polister.utils.RedisCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -38,6 +37,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Resource
     RedisCache redisCache;
+
+    @Resource
+    ArticleTagService articleTagService;
+
+    @Resource
+    ArticleTagMapper articleTagMapper;
 
     @Override
     public ResponseResult getHotArticleList() {
@@ -94,7 +99,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // vo优化
         List<ArticlePageVo> articlePageVos = BeanCopyUtils.copyBeanList(records, ArticlePageVo.class);
 
-        return ResponseResult.okResult(new PageVo(articlePageVos, page.getTotal()));
+        return ResponseResult.okResult(new ArticleListPageVo(articlePageVos, page.getTotal()));
     }
 
     @Override
@@ -114,6 +119,73 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         redisCache.increaseMapVue(SystemConstants.REDIS_VIEW_COUNT_KEY, id.toString(), 1);
 
         // 返回结果
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult addArticle(ArticleDto articleDto) {
+        // 保存文章信息
+        Article article = BeanCopyUtils.copyBean(articleDto, Article.class);
+         this.save(article);
+
+        // 保存Tag信息
+        List<ArticleTag> articleTags = articleDto.getTags().stream()
+                .map(tagId -> new ArticleTag(article.getId(), tagId.longValue())).toList();
+
+        articleTagService.saveBatch(articleTags);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult listArticle(Integer pageNum, Integer pageSize, String title, String summary) {
+
+        // 添加条件
+        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+
+        // 按照标题查找
+        wrapper.like(StringUtils.hasText(title), Article::getTitle, title);
+        // 按照简要查找
+        wrapper.like(StringUtils.hasText(summary), Article::getSummary, summary);
+
+        Page<Article> page = new Page<>(pageNum, pageSize);
+        page(page, wrapper);
+
+        return ResponseResult.okResult(new ContentArticleListVo(page.getRecords(), page.getTotal()));
+
+    }
+
+    @Override
+    public ResponseResult getArticle(Long id) {
+        // 先拿到文章
+        Article article = this.getById(id);
+
+        //再拿到标签
+        LambdaQueryWrapper<ArticleTag> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ArticleTag::getArticleId, id);
+        List<ArticleTag> articleTags = articleTagMapper.selectList(wrapper);
+        List<Long> tagIds = articleTags.stream().map(ArticleTag::getTagId).toList();
+        article.setTags(tagIds);
+
+        return ResponseResult.okResult(article);
+
+    }
+
+    @Override
+    public ResponseResult updateArticle(Article article) {
+        // 对Tag进行保存操作
+        // 首先删除该文章所有tag
+        LambdaQueryWrapper<ArticleTag> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ArticleTag::getArticleId, article.getId());
+        articleTagMapper.delete(wrapper);
+
+        // 然后对新的tagId进行写入
+        List<ArticleTag> articleTags = article.getTags().stream()
+                .map(articleTag -> new ArticleTag(article.getId(), articleTag)).toList();
+        articleTagService.saveBatch(articleTags);
+
+        // 更新文章
+        this.updateById(article);
+
         return ResponseResult.okResult();
     }
 }

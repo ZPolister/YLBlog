@@ -1,12 +1,12 @@
 package cn.polister.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,6 +61,9 @@ public class Article {
 
     @TableField(exist = false)
     private String categoryName;
+
+    @TableField(exist = false)
+    private List<Long> tags;
 
     public Article(Long id, Long viewCount) {
         this.id = id;

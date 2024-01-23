@@ -2,10 +2,10 @@ package cn.polister.service.impl;
 
 import cn.polister.constants.ArticleConstants;
 import cn.polister.constants.CategoryConstants;
-import cn.polister.entity.ResponseResult;
+import cn.polister.entity.Category;
+import cn.polister.entity.vo.CategoryShowVo;
 import cn.polister.entity.Article;
-import cn.polister.domain.vo.CategoryShowVo;
-import cn.polister.domain.entity.Category;
+import cn.polister.entity.ResponseResult;
 import cn.polister.mapper.CategoryMapper;
 import cn.polister.service.ArticleService;
 import cn.polister.service.CategoryService;

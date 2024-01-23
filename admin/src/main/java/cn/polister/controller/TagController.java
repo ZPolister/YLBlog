@@ -3,7 +3,6 @@ package cn.polister.controller;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Tag;
 import cn.polister.service.TagService;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -14,6 +13,7 @@ public class TagController {
 
     @Resource
     private TagService tagService;
+
     @GetMapping("/list")
     public ResponseResult listByPage(Integer pageNum, Integer pageSize, String name, String remark) {
         return tagService.listByPage(pageNum, pageSize, name, remark);
@@ -38,5 +38,10 @@ public class TagController {
     public ResponseResult updateTag(@RequestBody Tag tag) {
         tagService.updateById(tag);
         return ResponseResult.okResult();
+    }
+
+    @GetMapping("/listAllTag")
+    public ResponseResult listAllTag() {
+        return ResponseResult.okResult(tagService.list());
     }
 }
