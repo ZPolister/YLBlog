@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
@@ -81,6 +78,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         page(page, wrapper);
         // 获取结果
         List<Article> records = page.getRecords();
+       // records.sort(Comparator.comparing(Article::getUpdateTime));
 
         // feature: 从Redis中获取阅读量 2024.1.21
         records.forEach(article -> {

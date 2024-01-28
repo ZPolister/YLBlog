@@ -1,6 +1,5 @@
-package cn.polister.domain.vo;
+package cn.polister.entity.vo;
 
-import cn.polister.entity.vo.UserInfoVo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

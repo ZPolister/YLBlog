@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 @Service
 public class UploadServiceImpl implements UploadService {
@@ -26,7 +27,12 @@ public class UploadServiceImpl implements UploadService {
             throw new SystemException(AppHttpCodeEnum.FILE_TYPE_ERROR);
 
 
-        String url = cosClient.upLoadFile(img, PathUtils.generateFilePath(originalFilename));
+        String url = null;
+        try {
+            url = cosClient.upLoadFile(img, PathUtils.generateFilePath(originalFilename));
+        } catch (IOException e) {
+            throw new SystemException(AppHttpCodeEnum.SYSTEM_ERROR);
+        }
         return ResponseResult.okResult(url);
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -129,7 +130,7 @@ public class CosClient {
         return transferManager;
     }
 
-    public String upLoadFile(MultipartFile imgFile, String filePath) {
+    public String upLoadFile(MultipartFile imgFile, String filePath) throws IOException {
 
         COSClient cosClient = initCOSClient();
         // 获得传输流实例
@@ -140,6 +141,7 @@ public class CosClient {
 // 对象键(Key)是对象在存储桶中的唯一标识。
         String key = filePath;
 
+        InputStream inputStream = null;
         try {
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -147,7 +149,9 @@ public class CosClient {
 // 如果确实没办法获取到，则下面这行可以省略，但同时高级接口也没办法使用分块上传了
             objectMetadata.setContentLength(imgFile.getSize());
 
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, imgFile.getInputStream(), objectMetadata);
+            inputStream = imgFile.getInputStream();
+
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, inputStream, objectMetadata);
 
 // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
 // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
@@ -167,6 +171,8 @@ public class CosClient {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
+            assert inputStream != null;
+            inputStream.close();
             transferManager.shutdownNow();
             cosClient.shutdown();
         }

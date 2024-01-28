@@ -18,17 +18,17 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        //authException.printStackTrace();
+        authException.printStackTrace();
         //InsufficientAuthenticationException
         //BadCredentialsException
         ResponseResult result = null;
         // 登录鉴权验证错误
-        if(authException instanceof BadCredentialsException){
-            result = ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR.getCode(),authException.getMessage());
-        }else if(authException instanceof InsufficientAuthenticationException){ // token错误
+        if (authException instanceof BadCredentialsException) {
+            result = ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR.getCode(), authException.getMessage());
+        } else if (authException instanceof InsufficientAuthenticationException) { // token错误
             result = ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN);
-        }else{
-            result = ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR.getCode(),"认证或授权失败");
+        } else {
+            result = ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR.getCode(), "认证或授权失败");
         }
         //响应给前端
         WebUtils.renderString(response, JSON.toJSONString(result));

@@ -1,12 +1,11 @@
 package cn.polister.config;
 
 import cn.polister.fliter.JwtAuthenticationTokenFilter;
-import cn.polister.handler.AccessDeniedHandlerImpl;
-import cn.polister.handler.AuthenticationEntryPointImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,14 +18,12 @@ import javax.annotation.Resource;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Resource
-    AuthenticationEntryPointImpl authenticationEntryPoint;
-    @Resource
-    AccessDeniedHandlerImpl accessDeniedHandler;
-    @Resource
     JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        http.authorizeHttpRequests(auth -> {
@@ -46,19 +43,11 @@ public class SecurityConfig {
                 .antMatchers("/logout").authenticated()
                 .antMatchers("/user").authenticated()
                 //.antMatchers("/upload").authenticated()
-               // .antMatchers("/link/getAllLink").authenticated()
+                // .antMatchers("/link/getAllLink").authenticated()
                 // 除上面外的所有请求全部不需要认证即可访问
                 .anyRequest().permitAll();
         // Token校验过滤
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // 配置异常处理器
-        http.exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler);
-
-        // 禁用默认logout接口
-        http.logout().disable();
 
         return http.build();
     }

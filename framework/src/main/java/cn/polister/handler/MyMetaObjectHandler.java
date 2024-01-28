@@ -28,9 +28,17 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        LoginUser loginUser = (LoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId = loginUser.getUser().getId();
+        Long userId;
+        try {
+            LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            userId = loginUser.getUser().getId();
+        } catch (Exception e) {
+            userId = null;//表示是自己创建
+        }
+
         this.setFieldValByName("updateTime", new Date(), metaObject);
-        this.setFieldValByName(" ", userId, metaObject);
+        if (userId != null) {
+            this.setFieldValByName("updateBy", userId, metaObject);
+        }
     }
 }
