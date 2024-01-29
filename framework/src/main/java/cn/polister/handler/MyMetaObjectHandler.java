@@ -1,5 +1,6 @@
 package cn.polister.handler;
 
+import cn.polister.entity.Article;
 import cn.polister.entity.LoginUser;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
@@ -7,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
@@ -33,7 +35,12 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
             LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             userId = loginUser.getUser().getId();
         } catch (Exception e) {
-            userId = null;//表示是自己创建
+            Object originalObject = metaObject.getOriginalObject();
+            if(originalObject.getClass() == Article.class) {
+                userId = ((Article) originalObject).getUpdateBy();
+            } else {
+                userId = null;//表示是自己创建
+            }
         }
 
         this.setFieldValByName("updateTime", new Date(), metaObject);

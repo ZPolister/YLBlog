@@ -1,9 +1,7 @@
 package cn.polister.mapper;
 
-import cn.polister.entity.Menu;
 import cn.polister.entity.RoleMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
