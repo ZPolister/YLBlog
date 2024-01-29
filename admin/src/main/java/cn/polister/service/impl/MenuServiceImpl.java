@@ -2,18 +2,24 @@ package cn.polister.service.impl;
 
 import cn.polister.constants.SystemConstants;
 import cn.polister.entity.Menu;
+import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Role;
 import cn.polister.entity.RoleMenu;
+import cn.polister.entity.vo.MenuTreeVo;
+import cn.polister.enums.AppHttpCodeEnum;
 import cn.polister.mapper.MenuMapper;
 import cn.polister.mapper.RoleMenuMapper;
 import cn.polister.service.MenuService;
 import cn.polister.service.RoleService;
+import cn.polister.utils.BeanCopyUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -82,6 +88,87 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 拿到结果
         List<Menu> menus = this.list(wrapper);
         return builderMenuTree(menus, 0L);
+    }
+
+    @Override
+    public ResponseResult listAllMenus(String status, String menuName) {
+
+        // 确定查找条件
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StringUtils.hasText(status), Menu::getStatus, status);
+        wrapper.like(StringUtils.hasText(menuName), Menu::getMenuName, menuName);
+
+        // 拿到结果返回
+        List<Menu> menus = this.list(wrapper);
+        return ResponseResult.okResult(menus);
+    }
+
+    @Override
+    public ResponseResult addMenu(Menu menu) {
+        this.save(menu);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getMenuInfo(Long id) {
+        Menu menu = this.getById(id);
+        return ResponseResult.okResult(menu);
+    }
+
+    @Override
+    public ResponseResult updateMenuInfo(Menu menu) {
+
+        if (menu.getParentId().equals(menu.getId())) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR,
+                    "修改菜单' " + menu.getMenuName() +" '失败，上级菜单不能选择自己");
+        }
+
+        this.updateById(menu);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteMenu(Long id) {
+
+        List<Menu> menus = this.list();
+        for (var menu : menus) {
+            if (menu.getParentId().equals(id)) {
+                return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR, "存在子菜单不允许删除");
+            }
+        }
+
+        this.removeById(id);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getTreeSelect() {
+        // 拿到所有状态正常的权限
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Menu::getStatus, SystemConstants.PERMISSION_STATUS_NORMAL);
+        wrapper.orderByAsc(Menu::getOrderNum);
+        List<Menu> menus = this.list(wrapper);
+
+        // 建树
+        List<Menu> result = builderMenuTree(menus, 0L);
+
+        // 对树进行VO优化
+        List<MenuTreeVo> treeVo = getTreeVo(result);
+        return ResponseResult.okResult(treeVo);
+    }
+
+    private List<MenuTreeVo> getTreeVo(List<Menu> list) {
+        return list.stream().map(menu -> BeanCopyUtils.copyBean(menu, MenuTreeVo.class)
+                .setChildren(getTreeChildrenVo(menu.getChildren()))
+                        .setLabel(menu.getMenuName()))
+                .toList();
+    }
+
+    private List<MenuTreeVo> getTreeChildrenVo(List<Menu> list) {
+        return list.stream().map(menu -> BeanCopyUtils.copyBean(menu, MenuTreeVo.class)
+                .setChildren(getTreeChildrenVo(menu.getChildren()))
+                        .setLabel(menu.getMenuName()))
+                .toList();
     }
 
     private List<Menu> builderMenuTree(List<Menu> menus, Long parentId) {

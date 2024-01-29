@@ -1,6 +1,9 @@
 package cn.polister.service;
 
+import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Role;
+import cn.polister.entity.dto.RoleAddDto;
+import cn.polister.entity.dto.RoleChangeStatusDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,4 +18,10 @@ import java.util.List;
 public interface RoleService extends IService<Role> {
 
     List<Role> getRolesByUserId(Long id);
+
+    ResponseResult listAllRole(Integer pageNum, Integer pageSize, String roleName, String status);
+
+    ResponseResult changeRoleStatus(RoleChangeStatusDto roleChangeStatusDto);
+
+    ResponseResult addRole(RoleAddDto roleAddDto);
 }

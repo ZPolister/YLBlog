@@ -37,7 +37,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // 如果没有token，直接放行进行后面验证（不会过）
         if (!StringUtils.hasText(token)) {
-            filterChain.doFilter(request, response);
+            ResponseResult responseResult = ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN);
+            WebUtils.renderString(response, JSON.toJSONString(responseResult));
+            //filterChain.doFilter(request, response);
             return;
         }
 

@@ -1,6 +1,7 @@
 package cn.polister.service;
 
 import cn.polister.entity.Menu;
+import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -18,4 +19,16 @@ public interface MenuService extends IService<Menu> {
     List<Menu> getPermissionsByRoles(List<Role> roles);
 
     List<Menu> selectRouterMenuTreeByUserId(Long userId);
+
+    ResponseResult listAllMenus(String status, String menuName);
+
+    ResponseResult addMenu(Menu menu);
+
+    ResponseResult getMenuInfo(Long id);
+
+    ResponseResult updateMenuInfo(Menu menu);
+
+    ResponseResult deleteMenu(Long id);
+
+    ResponseResult getTreeSelect();
 }
