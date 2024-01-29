@@ -3,6 +3,10 @@ package cn.polister.service.impl;
 import cn.polister.constants.ArticleConstants;
 import cn.polister.constants.CategoryConstants;
 import cn.polister.entity.Category;
+import cn.polister.entity.dto.CategoryDto;
+import cn.polister.entity.dto.CategoryUpdateVo;
+import cn.polister.entity.vo.CategoryListVo;
+import cn.polister.entity.vo.CategoryPageVo;
 import cn.polister.entity.vo.CategoryShowVo;
 import cn.polister.entity.Article;
 import cn.polister.entity.ResponseResult;
@@ -11,8 +15,10 @@ import cn.polister.service.ArticleService;
 import cn.polister.service.CategoryService;
 import cn.polister.utils.BeanCopyUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -52,5 +58,55 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
         // 进行vo优化
         return ResponseResult.okResult(BeanCopyUtils.copyBeanList(result, CategoryShowVo.class));
+    }
+
+    @Override
+    public ResponseResult list(Integer pageNum, Integer pageSize, String name, String status) {
+
+        // 构造查找条件
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StringUtils.hasText(status), Category::getStatus, status);
+        wrapper.like(StringUtils.hasText(name), Category::getName, name);
+
+        // 构造分页
+        Page<Category> page = new Page<>(pageNum, pageSize);
+        page(page, wrapper);
+
+        // 获取结果返回
+        List<Category> records = page.getRecords();
+        List<CategoryListVo> result = BeanCopyUtils.copyBeanList(records, CategoryListVo.class);
+        return ResponseResult.okResult(new CategoryPageVo(result, page.getTotal()));
+    }
+
+    @Override
+    public ResponseResult addCategory(CategoryDto categoryDto) {
+
+        // 进行beanCopy
+        Category category = BeanCopyUtils.copyBean(categoryDto, Category.class);
+
+        // 保存到数据库
+        this.save(category);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult updateCategory(CategoryUpdateVo categoryUpdateVo) {
+        Category category = BeanCopyUtils.copyBean(categoryUpdateVo, Category.class);
+
+        this.updateById(category);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteCategory(Long id) {
+
+        this.removeById(id);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getCategoryInfo(Long id) {
+        Category category = this.getById(id);
+        return ResponseResult.okResult(category);
     }
 }
