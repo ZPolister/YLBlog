@@ -11,6 +11,7 @@ import cn.polister.utils.BeanCopyUtils;
 import cn.polister.utils.WebUtils;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/content/category")
+@PreAuthorize("@permissionService.hasPermission('content:category:list')")
 public class CategoryController {
 
     @Resource

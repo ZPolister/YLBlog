@@ -14,4 +14,16 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface LinkService extends IService<Link> {
 
     ResponseResult getAllLink();
+
+    ResponseResult listLinkByPage(Integer pageNum, Integer pageSize, String name, String status);
+
+    ResponseResult addLink(Link link);
+
+    ResponseResult getLinkInfo(Long id);
+
+    ResponseResult updateLink(Link link);
+
+    ResponseResult deleteLink(Long id);
+
+    ResponseResult changeLinkStatus(Long id, String status);
 }
