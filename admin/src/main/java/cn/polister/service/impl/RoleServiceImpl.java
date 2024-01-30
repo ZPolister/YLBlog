@@ -1,5 +1,6 @@
 package cn.polister.service.impl;
 
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Role;
 import cn.polister.entity.RoleMenu;
@@ -32,7 +33,6 @@ import java.util.List;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
     @Resource
     private UserRoleMapper userRoleMapper;
-
     @Resource
     private RoleMenuMapper roleMenuMapper;
     @Override
@@ -47,7 +47,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public ResponseResult listAllRole(Integer pageNum, Integer pageSize, String roleName, String status) {
+    public ResponseResult listRoleByPage(Integer pageNum, Integer pageSize, String roleName, String status) {
 
         // 构建查找条件
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
@@ -89,6 +89,52 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
         roleMenuMapper.insertList(roleMenus);
         return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getRoleInfo(Long id) {
+        Role role = this.getById(id);
+        return ResponseResult.okResult(role);
+    }
+
+    @Override
+    public ResponseResult updateRoleInfo(RoleAddDto roleAddDto) {
+        // 先对角色信息本身进行更新
+        Role role = BeanCopyUtils.copyBean(roleAddDto, Role.class);
+        this.updateById(role);
+
+        // 再对关联表id进行更新
+        LambdaQueryWrapper<RoleMenu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleMenu::getRoleId, role.getId());
+        roleMenuMapper.delete(wrapper);
+
+        // 最后再对新的关联id进行插入
+        List<RoleMenu> roleMenus = roleAddDto.getMenuIds().stream()
+                .map(menuId -> new RoleMenu(role.getId(), menuId)).toList();
+        roleMenuMapper.insertList(roleMenus);
+
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteRole(Long id) {
+        // 先从关联表中删了该角色
+        LambdaQueryWrapper<RoleMenu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleMenu::getRoleId, id);
+        roleMenuMapper.delete(wrapper);
+
+        // 删除本体
+        this.removeById(id);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult listAllRole() {
+        LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Role::getStatus, FrameworkSystemConstants.ROLE_STATUS_NORMAL);
+
+        List<Role> roles = this.list(wrapper);
+        return ResponseResult.okResult(roles);
     }
 
 

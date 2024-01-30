@@ -1,4 +1,4 @@
-package cn.polister.config;
+package cn.polister.service.impl;
 
 import cn.polister.entity.LoginUser;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -40,7 +40,12 @@ public class MenuController {
 
     @GetMapping("/treeselect")
     public ResponseResult getTreeSelect() {
-        return menuService.getTreeSelect();
+        return ResponseResult.okResult(menuService.getTreeSelect());
+    }
+
+    @GetMapping("/roleMenuTreeselect/{id}")
+    public ResponseResult getTreeSelectByRole(@PathVariable Long id) {
+        return menuService.getTreeSelectByRole(id);
     }
 
 }

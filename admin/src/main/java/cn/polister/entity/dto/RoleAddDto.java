@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class RoleAddDto {
+    private Long id;
     private String roleName;
     private String roleKey;
     private Integer roleSort;

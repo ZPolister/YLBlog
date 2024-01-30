@@ -1,6 +1,6 @@
 package cn.polister.service.impl;
 
-import cn.polister.constants.SystemConstants;
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.vo.BlogUserLoginVo;
 import cn.polister.entity.vo.UserInfoVo;
 import cn.polister.entity.LoginUser;
@@ -48,7 +48,7 @@ public class BlogLoginServiceImpl implements BlogLoginService {
 
         // 缓存到Redis中
         redisCache.setCacheObject("BlogLogin:" + jwt, loginUser,
-                SystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
+                FrameworkSystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
 
         // 封装Vo返回
         UserInfoVo userInfoVo = BeanCopyUtils.copyBean(loginUser.getUser(), UserInfoVo.class);

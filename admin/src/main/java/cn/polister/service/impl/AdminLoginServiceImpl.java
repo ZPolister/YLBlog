@@ -1,6 +1,6 @@
 package cn.polister.service.impl;
 
-import cn.polister.constants.SystemConstants;
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.LoginUser;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.User;
@@ -46,7 +46,7 @@ public class AdminLoginServiceImpl implements AdminLoginService {
 
         // 缓存到Redis中
         redisCache.setCacheObject("AdminLogin:" + jwt, loginUser,
-                SystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
+                FrameworkSystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
 
         return ResponseResult.okResult(new AdminUserVo(jwt));
 

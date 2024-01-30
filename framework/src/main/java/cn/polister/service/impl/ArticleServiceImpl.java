@@ -2,7 +2,7 @@ package cn.polister.service.impl;
 
 import cn.polister.constants.ArticleConstants;
 import cn.polister.constants.HotArticleConstants;
-import cn.polister.constants.SystemConstants;
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.*;
 import cn.polister.entity.dto.ArticleDto;
 import cn.polister.entity.vo.*;
@@ -83,7 +83,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // feature: 从Redis中获取阅读量 2024.1.21
         records.forEach(article -> {
             Integer viewCount = redisCache.getCacheMapValue(
-                    SystemConstants.REDIS_VIEW_COUNT_KEY, article.getId().toString());
+                    FrameworkSystemConstants.REDIS_VIEW_COUNT_KEY, article.getId().toString());
 
             article.setViewCount(viewCount.longValue());
         });
@@ -105,7 +105,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         Article article = this.getById(id);
         // 拿到正确的浏览量
-        Integer cacheMapValue = redisCache.getCacheMapValue(SystemConstants.REDIS_VIEW_COUNT_KEY, id.toString());
+        Integer cacheMapValue = redisCache.getCacheMapValue(FrameworkSystemConstants.REDIS_VIEW_COUNT_KEY, id.toString());
         article.setViewCount(cacheMapValue.longValue());
         //article.setViewCount();
         return ResponseResult.okResult(article);
@@ -114,7 +114,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ResponseResult updateViewCount(Long id) {
         // 调用redis中指定的值进行递增
-        redisCache.increaseMapVue(SystemConstants.REDIS_VIEW_COUNT_KEY, id.toString(), 1);
+        redisCache.increaseMapVue(FrameworkSystemConstants.REDIS_VIEW_COUNT_KEY, id.toString(), 1);
 
         // 返回结果
         return ResponseResult.okResult();

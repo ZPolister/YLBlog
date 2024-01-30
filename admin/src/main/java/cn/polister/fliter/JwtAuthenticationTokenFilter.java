@@ -1,6 +1,6 @@
 package cn.polister.fliter;
 
-import cn.polister.constants.SystemConstants;
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.LoginUser;
 import cn.polister.entity.ResponseResult;
 import cn.polister.enums.AppHttpCodeEnum;
@@ -62,7 +62,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         // 获取成功，续签
-        redisCache.expire("AdminLogin:" + token, SystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
+        redisCache.expire("AdminLogin:" + token, FrameworkSystemConstants.LOGIN_TIMEOUT, TimeUnit.DAYS);
 
         // 存入SecurityContextHolder
         UsernamePasswordAuthenticationToken authenticationToken

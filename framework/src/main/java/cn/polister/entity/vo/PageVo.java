@@ -9,10 +9,10 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PageVo {
-    private List<Tag> rows;
+    private List rows;
     private Long total;
 
-    public PageVo(List<Tag> rows, Long total) {
+    public PageVo(List rows, Long total) {
         this.rows = rows;
         this.total = total;
     }

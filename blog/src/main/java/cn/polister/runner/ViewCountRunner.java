@@ -1,6 +1,6 @@
 package cn.polister.runner;
 
-import cn.polister.constants.SystemConstants;
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.Article;
 import cn.polister.mapper.ArticleMapper;
 import cn.polister.utils.RedisCache;
@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,6 +29,6 @@ public class ViewCountRunner implements CommandLineRunner {
                 article -> article.getViewCount().intValue()));
 
         // 存到redis中
-        redisCache.setCacheMap(SystemConstants.REDIS_VIEW_COUNT_KEY, collect);
+        redisCache.setCacheMap(FrameworkSystemConstants.REDIS_VIEW_COUNT_KEY, collect);
     }
 }

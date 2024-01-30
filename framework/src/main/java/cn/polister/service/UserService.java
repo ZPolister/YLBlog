@@ -2,6 +2,7 @@ package cn.polister.service;
 
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.User;
+import cn.polister.entity.dto.UserDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 
@@ -18,4 +19,15 @@ public interface UserService extends IService<User> {
     ResponseResult userInfo(User user);
 
     ResponseResult register(User user);
+
+
+    ResponseResult listByPage(Integer pageNum, Integer pageSize, String userName, String phonenumber, String status);
+
+    ResponseResult addUser(UserDto userDto);
+
+    ResponseResult deleteUser(Long id);
+
+    ResponseResult getUserInfo(Long id);
+
+    ResponseResult updateUser(UserDto userDto);
 }

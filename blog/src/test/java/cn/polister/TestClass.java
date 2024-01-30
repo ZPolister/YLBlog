@@ -1,11 +1,10 @@
 package cn.polister;
 
 
-import cn.polister.constants.SystemConstants;
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.entity.Article;
 import cn.polister.service.ArticleService;
 import cn.polister.utils.RedisCache;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
@@ -24,7 +23,7 @@ public class TestClass {
     void testCountJob() {
 
         // 先把redis中数据取下来
-        Map<String, Integer> viewCounts = redisCache.getCacheMap(SystemConstants.REDIS_VIEW_COUNT_KEY);
+        Map<String, Integer> viewCounts = redisCache.getCacheMap(FrameworkSystemConstants.REDIS_VIEW_COUNT_KEY);
         List<Article> articles = new ArrayList<>();
         viewCounts.forEach((k, v) -> articles.add(new Article(Long.valueOf(k), v.longValue())));
 

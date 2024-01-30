@@ -329,7 +329,7 @@
                     <option name="comment" value="手机号" />
                     <option name="custom" value="false" />
                     <option name="ext" value="{}" />
-                    <option name="name" value="phonenumber" />
+                    <option name="name" value="phoneNumber" />
                     <option name="type" value="java.lang.String" />
                   </ColumnInfoDTO>
                   <ColumnInfoDTO>
@@ -385,9 +385,9 @@
               </option>
               <option name="name" value="SysUser" />
               <option name="preName" value="sys_" />
-              <option name="saveModelName" value="framework" />
+              <option name="saveModelName" value="admin" />
               <option name="savePackageName" value="cn.polister" />
-              <option name="savePath" value="./framework/src/main/java/cn/polister" />
+              <option name="savePath" value="./admin/src/main/java/cn/polister" />
               <option name="templateGroupName" value="MybatisPlus" />
             </TableInfoDTO>
           </value>

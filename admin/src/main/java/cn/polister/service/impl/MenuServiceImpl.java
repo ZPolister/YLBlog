@@ -1,11 +1,13 @@
 package cn.polister.service.impl;
 
+import cn.polister.constants.FrameworkSystemConstants;
 import cn.polister.constants.SystemConstants;
 import cn.polister.entity.Menu;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Role;
 import cn.polister.entity.RoleMenu;
 import cn.polister.entity.vo.MenuTreeVo;
+import cn.polister.entity.vo.RoleMenuTreeSelectVo;
 import cn.polister.enums.AppHttpCodeEnum;
 import cn.polister.mapper.MenuMapper;
 import cn.polister.mapper.RoleMenuMapper;
@@ -19,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +57,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         return this.listByIds(menuIds).stream().filter(menu ->
                 SystemConstants.PERMISSION_STATUS_NORMAL.equals(menu.getStatus()) &&
                         (SystemConstants.MENU_TYPE_MENU.equals(menu.getMenuType()) ||
-                                SystemConstants.MENU_TYPE_BUTTON.equals(menu.getMenuType()))).toList();
+                               SystemConstants.MENU_TYPE_BUTTON.equals(menu.getMenuType()))).toList();
     }
 
     @Override
@@ -142,7 +143,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
-    public ResponseResult getTreeSelect() {
+    public List<MenuTreeVo> getTreeSelect() {
         // 拿到所有状态正常的权限
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getStatus, SystemConstants.PERMISSION_STATUS_NORMAL);
@@ -153,8 +154,24 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         List<Menu> result = builderMenuTree(menus, 0L);
 
         // 对树进行VO优化
-        List<MenuTreeVo> treeVo = getTreeVo(result);
-        return ResponseResult.okResult(treeVo);
+        return getTreeVo(result);
+    }
+
+    @Override
+    public ResponseResult getTreeSelectByRole(Long id) {
+
+        // 先从关联表里拿到Menu菜单
+        LambdaQueryWrapper<RoleMenu> roleMenuLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleMenuLambdaQueryWrapper.eq(RoleMenu::getRoleId, id);
+        List<RoleMenu> roleMenus = roleMenuMapper.selectList(roleMenuLambdaQueryWrapper);
+        List<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
+
+        // 再找到所有菜单
+        List<MenuTreeVo> treeSelect = this.getTreeSelect();
+
+        // 进行Vo优化，封装返回
+        return ResponseResult.okResult(new RoleMenuTreeSelectVo(treeSelect, menuIds));
+
     }
 
     private List<MenuTreeVo> getTreeVo(List<Menu> list) {

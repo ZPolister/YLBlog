@@ -3,6 +3,7 @@ package cn.polister.service;
 import cn.polister.entity.Menu;
 import cn.polister.entity.ResponseResult;
 import cn.polister.entity.Role;
+import cn.polister.entity.vo.MenuTreeVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -30,5 +31,7 @@ public interface MenuService extends IService<Menu> {
 
     ResponseResult deleteMenu(Long id);
 
-    ResponseResult getTreeSelect();
+    List<MenuTreeVo> getTreeSelect();
+
+    ResponseResult getTreeSelectByRole(Long id);
 }

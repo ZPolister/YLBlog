@@ -16,8 +16,8 @@ public class RoleController {
     private RoleService roleService;
 
     @GetMapping("/list")
-    public ResponseResult listAllRole(Integer pageNum, Integer pageSize, String roleName, String status) {
-        return roleService.listAllRole(pageNum, pageSize, roleName, status);
+    public ResponseResult listRoleByPage(Integer pageNum, Integer pageSize, String roleName, String status) {
+        return roleService.listRoleByPage(pageNum, pageSize, roleName, status);
     }
 
     @PutMapping("/changeStatus")
@@ -28,6 +28,26 @@ public class RoleController {
     @PostMapping
     public ResponseResult addRole(@RequestBody RoleAddDto roleAddDto) {
         return roleService.addRole(roleAddDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseResult getRoleInfo(@PathVariable Long id) {
+        return roleService.getRoleInfo(id);
+    }
+
+    @PutMapping()
+    public ResponseResult updateRoleInfo(@RequestBody RoleAddDto roleAddDto) {
+        return roleService.updateRoleInfo(roleAddDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseResult deleteRole(@PathVariable Long id) {
+        return roleService.deleteRole(id);
+    }
+
+    @GetMapping("/listAllRole")
+    public ResponseResult listAllRole() {
+        return roleService.listAllRole();
     }
 
 }
